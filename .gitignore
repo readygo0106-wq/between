@@ -1,0 +1,17 @@
+# Project-local Node.js runtime and installed packages
+.tools/
+node_modules/
+
+# Build output and local environment files
+dist/
+.next/
+out/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+
+# Editor and operating-system files
+.vscode/
+.DS_Store
+Thumbs.db
