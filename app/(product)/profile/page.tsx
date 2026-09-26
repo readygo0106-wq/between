@@ -8,6 +8,7 @@ import { CircleUserRound, Database, LogOut, Mail, RotateCcw, ShieldCheck } from 
 import { useApp } from "@/components/providers/app-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
+import { withBasePath } from "@/lib/paths";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 type Mode = "login" | "signup" | "reset";
@@ -38,10 +39,11 @@ export default function ProfilePage() {
     if (mode !== "reset" && password.length < 6) { setMessage("密码至少需要 6 个字符。"); return; }
     setLoading(true);
     setMessage("");
+    const redirectTo = window.location.origin + withBasePath("/profile/");
     const result = mode === "signup"
-      ? await client.auth.signUp({ email, password })
+      ? await client.auth.signUp({ email, password, options: { emailRedirectTo: redirectTo } })
       : mode === "reset"
-        ? await client.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + "/profile" })
+        ? await client.auth.resetPasswordForEmail(email, { redirectTo })
         : await client.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (result.error) { setMessage(result.error.message === "Invalid login credentials" ? "邮箱或密码不对，再检查一下。" : "刚才没有成功：" + result.error.message); return; }
